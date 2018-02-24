@@ -331,7 +331,7 @@ from collections import namedtuple
 
 def smooth_local_affine(output_cpu, input_cpu, epsilon, patch, h, w, f_r, f_e):
   program = Program(src, 'best_local_affine_kernel.cu')
-  ptx = program.compile(['-I/usr/local/cuda-9.1/include'])
+  ptx = program.compile(['-I/usr/local/cuda-9.0/include'])
   m = function.Module()
   m.load(bytes(ptx.encode()))
 
