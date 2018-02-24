@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Copyright (C) 2018 NVIDIA Corporation.  All rights reserved.
 Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
@@ -28,18 +29,40 @@ parser.add_argument('--decoder4', default='./models/feature_invertor_conv4_1_mas
 parser.add_argument('--decoder3', default='./models/feature_invertor_conv3_1_mask.t7', help='Path to the decoder3')
 parser.add_argument('--decoder2', default='./models/feature_invertor_conv2_1_mask.t7', help='Path to the decoder2')
 parser.add_argument('--decoder1', default='./models/feature_invertor_conv1_1_mask.t7', help='Path to the decoder1')
+parser.add_argument('--content-image', default='./images/content/in81.png', help='Path to content image')
+parser.add_argument('--style-image', default='./images/style/in81.png', help='Path to style image')
+parser.add_argument('--content-map', default=[], help='Path to content image')
+parser.add_argument('--style-map', default=[], help='Path to style image')
+parser.add_argument('--output-image', default='./results/in81.png', help='Path to style image')
 args = parser.parse_args()
+
+style_seg_path = args.style_map
+if args.style_map == []:
+	style_map = os.path.join("./images/styleSeg/",os.path.basename(args.style_image))
+	if os.path.exists(style_map):
+		style_seg_path = style_map
+
+content_seg_path = args.content_map
+if args.content_map == []:
+	content_map = os.path.join("./images/contentSeg/",os.path.basename(args.content_image))
+	if os.path.exists(content_map):
+		content_seg_path = content_map
+
+content_image_path = args.content_image
+style_image_path = args.style_image
+output_image_path = args.output_image
+
+print ("Content image {}".format(content_image_path))
+print ("Style image {}".format(style_image_path))
+print ("Content map {}".format(content_seg_path))
+print ("Style map {}".format(style_seg_path))
+print ("Output image {}".format(output_image_path))
 
 # Load model
 p_wct = PhotoWCT(args)
 p_pro = Propagator()
 p_wct.cuda(0)
 
-content_image_path = "./images/content1.png"
-content_seg_path = []
-style_image_path = "./images/style1.png"
-style_seg_path = []
-output_image_path = "results/example1.png"
 
 # Load image
 cont_img = Image.open(content_image_path).convert('RGB')
